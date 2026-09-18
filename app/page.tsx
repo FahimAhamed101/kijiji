@@ -322,7 +322,7 @@ function ListingRow({
     <div className="listing-row-container">
       <div className="listing-row" role="list">
         {listings.map((item, index) => (
-          <article className="listing-card" key={`${item.title}-${index}`} role="listitem">
+          <Link href="/listing/1" className="listing-card" key={`${item.title}-${index}`} role="listitem">
             <div className="image-wrap">
               <img src={item.image} alt={item.title} loading="lazy" />
             </div>
@@ -331,7 +331,7 @@ function ListingRow({
               <small>{item.location}</small>
               <strong>{item.price}</strong>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
       <button className="carousel-next-btn" type="button" aria-label="Next listings">
