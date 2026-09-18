@@ -1,26 +1,46 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import type { Metadata, Viewport } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: "Marketli — Buy, sell and find anything near you",
-  description:
-    "A local classifieds marketplace clone built with Next.js and Tailwind CSS.",
-};
+  title: 'Kijiji Header',
+  description: 'A responsive Kijiji-style marketplace header.',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
+
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
+}
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col font-sans text-[15px]">
-        <Header />
-        <main className="flex-1 bg-surface">{children}</main>
-        <Footer />
+      <body className="antialiased">
+        {children}
       </body>
     </html>
-  );
+  )
 }
