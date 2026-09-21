@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import Providers from '@/components/Providers'
 
 export const metadata: Metadata = {
-  title: 'Kijiji Header',
-  description: 'A responsive Kijiji-style marketplace header.',
+  title: 'Kijiji — Canada’s Marketplace',
+  description: 'A responsive Kijiji-style marketplace with a MongoDB-backed admin panel.',
   icons: {
     icon: [
       {
@@ -39,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

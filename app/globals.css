@@ -215,6 +215,191 @@ button, input {
   background: #eaeaff;
 }
 
+/* Category picker + dropdown ------------------------------------------- */
+
+.category-picker-wrap {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* Let the label ellipsis instead of pushing the chevron out of the box. */
+.category-picker .picker-text {
+  min-width: 0;
+}
+
+.category-picker .picker-text > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-picker.is-open {
+  background: #f2f2fa;
+}
+
+.category-picker .chevron {
+  transition: transform 0.15s ease;
+}
+
+.category-picker.is-open .chevron {
+  transform: rotate(180deg);
+}
+
+/* Positioned with fixed coordinates from JS so the search bar's
+   `overflow: hidden` can't clip it and it never leaves the viewport. */
+.category-menu {
+  position: fixed;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dcdce6;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(28, 27, 31, 0.16);
+}
+
+.category-menu-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #ececf2;
+  flex-shrink: 0;
+}
+
+.category-menu-search svg {
+  width: 16px;
+  height: 16px;
+  stroke: #7e7c91;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+.category-menu-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  font-size: 14px;
+  color: #2a2659;
+  background: transparent;
+}
+
+.category-menu-search input::placeholder {
+  color: #8b8999;
+}
+
+.category-menu-clear {
+  border: 0;
+  background: transparent;
+  color: #7e7c91;
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.category-menu-clear:hover {
+  background: #f2f2fa;
+  color: #2a2659;
+}
+
+.category-menu-list {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.category-menu-heading {
+  padding: 8px 14px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8b8999;
+}
+
+.category-menu-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #3a3752;
+}
+
+.category-menu-option .option-label {
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.category-menu-option .option-hint {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #9b99a9;
+}
+
+.category-menu-option .option-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: #9b99a9;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-menu-option .option-check {
+  width: 14px;
+  height: 14px;
+  stroke: var(--kijiji-purple);
+  flex-shrink: 0;
+}
+
+/* Hover and keyboard highlight share one visual state. */
+.category-menu-option.is-active {
+  background: #f4f4fb;
+}
+
+.category-menu-option.is-selected .option-label {
+  color: var(--kijiji-purple);
+  font-weight: 700;
+}
+
+.category-menu-option.is-selected .option-hint {
+  display: none;
+}
+
+.category-menu-empty {
+  padding: 14px;
+  font-size: 13px;
+  color: #8b8999;
+  text-align: center;
+}
+
+/* Search input clear button */
+.search-clear {
+  border: 0;
+  background: transparent;
+  color: #7e7c91;
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.search-clear:hover {
+  background: #f2f2fa;
+  color: #2a2659;
+}
+
 /* Account Actions */
 .account-actions {
   display: flex;
