@@ -13,6 +13,7 @@ import {
   Select,
   Textarea,
 } from '@/components/admin/ui'
+import ImageUploader from './ImageUploader'
 import type { Product } from '@/store/types'
 
 export type ProductFormValues = {
@@ -114,7 +115,6 @@ export default function ProductForm({
 }) {
   const [values, setValues] = useState<ProductFormValues>(initial)
   const [tagInput, setTagInput] = useState('')
-  const [imageInput, setImageInput] = useState('')
   const [localError, setLocalError] = useState<string | null>(null)
 
   const { data: categoriesData } = useGetCategoriesQuery()
@@ -135,13 +135,6 @@ export default function ProductForm({
     if (!tag || values.tags.includes(tag)) return setTagInput('')
     set('tags', [...values.tags, tag])
     setTagInput('')
-  }
-
-  function addImage() {
-    const url = imageInput.trim()
-    if (!url || values.images.includes(url)) return setImageInput('')
-    set('images', [...values.images, url])
-    setImageInput('')
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -254,51 +247,18 @@ export default function ProductForm({
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-sm font-semibold text-ink">Images</h2>
-          <div className="flex gap-2">
-            <Input
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  addImage()
-                }
-              }}
-              placeholder="https://images.example.com/photo.jpg"
-            />
-            <Button type="button" variant="secondary" onClick={addImage}>
-              <Plus className="h-4 w-4" />
-              Add
-            </Button>
+          <div className="mb-4">
+            <h2 className="text-sm font-semibold text-ink">Listing photos</h2>
+            <p className="text-xs text-ink-muted">
+              Upload photos to Cloudinary or link URLs. The first photo is your listing thumbnail.
+            </p>
           </div>
-          <p className="mt-1 text-xs text-ink-muted">
-            The first image is used as the thumbnail on listing cards.
-          </p>
-
-          {values.images.length > 0 && (
-            <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {values.images.map((url, i) => (
-                <li key={url} className="group relative overflow-hidden rounded-lg border border-line">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={url} alt="" className="h-24 w-full object-cover" />
-                  {i === 0 && (
-                    <span className="absolute left-1.5 top-1.5 rounded bg-brand px-1.5 py-0.5 text-[10px] font-medium text-white">
-                      Main
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => set('images', values.images.filter((u) => u !== url))}
-                    className="absolute right-1.5 top-1.5 rounded-md bg-white/90 p-1 text-red-600 opacity-0 transition-opacity group-hover:opacity-100"
-                    aria-label="Remove image"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ImageUploader
+            images={values.images}
+            onChange={(nextImages) => set('images', nextImages)}
+            folder="kijiji_products"
+            maxImages={12}
+          />
         </Card>
 
         <Card>

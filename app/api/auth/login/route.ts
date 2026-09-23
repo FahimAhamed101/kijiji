@@ -1,4 +1,4 @@
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import User from '@/lib/models/User'
 import { signSession, verifyPassword, sessionCookieOptions, SESSION_COOKIE } from '@/lib/auth'
@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
       role: user.role as 'admin' | 'editor' | 'moderator',
     })
 
-    const res = Response.json({
+    const cookieOpts = sessionCookieOptions(req)
+    const res = NextResponse.json({
       user: {
         id: String(user._id),
         name: user.name,
@@ -50,10 +51,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
       },
     })
-    res.headers.append(
-      'Set-Cookie',
-      serializeCookie(SESSION_COOKIE, token, sessionCookieOptions(req))
-    )
+    res.cookies.set(SESSION_COOKIE, token, cookieOpts)
     return res
   } catch (err) {
     return jsonError(errorMessage(err), 500)

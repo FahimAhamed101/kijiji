@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Pencil, Plus, Trash2, Star } from 'lucide-react'
+import { Pencil, Plus, Trash2, Star, UploadCloud } from 'lucide-react'
 import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
@@ -60,6 +60,27 @@ export default function AdminCategoriesPage() {
   const [pendingDelete, setPendingDelete] = useState<Category | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  async function handleCategoryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingImage(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'kijiji_categories')
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.url && draft) {
+        setDraft({ ...draft, image: data.url })
+      }
+    } catch {
+      // ignore
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   const { data: me } = useGetMeQuery()
   const isAdmin = me?.user?.role === 'admin'
@@ -374,13 +395,46 @@ export default function AdminCategoriesPage() {
               </Field>
             </div>
 
-            <Field label="Tile image URL">
-              <Input
-                value={draft.image ?? ''}
-                onChange={(e) => setDraft({ ...draft, image: e.target.value })}
-                placeholder="https://images.unsplash.com/…"
-              />
-            </Field>
+            <div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+                  Tile image
+                </span>
+                {uploadingImage && (
+                  <span className="text-xs text-brand animate-pulse">Uploading to Cloudinary…</span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={draft.image ?? ''}
+                  onChange={(e) => setDraft({ ...draft, image: e.target.value })}
+                  placeholder="https://res.cloudinary.com/… or https://images.unsplash.com/…"
+                  className="flex-1"
+                />
+                <label className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:bg-surface cursor-pointer shrink-0 transition-colors">
+                  {uploadingImage ? (
+                    <Spinner className="h-3.5 w-3.5" />
+                  ) : (
+                    <UploadCloud className="h-3.5 w-3.5 text-brand" />
+                  )}
+                  <span>Upload</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCategoryUpload}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                </label>
+              </div>
+              {draft.image && (
+                <div className="mt-2 flex items-center gap-2.5 rounded-lg border border-line bg-surface p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={draft.image} alt="Preview" className="h-10 w-10 rounded object-cover border border-line" />
+                  <span className="truncate text-xs text-ink-muted font-mono">{draft.image}</span>
+                </div>
+              )}
+            </div>
 
             <Field label="Description">
               <Textarea
