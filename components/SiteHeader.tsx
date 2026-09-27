@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useGetCategoriesQuery } from '@/store/categoriesApi'
 import CategoryPicker, { type CategorySelection } from '@/components/CategoryPicker'
+import { LogoLockup } from '@/components/Logo'
 
 function SearchIcon() {
   return (
@@ -118,16 +119,8 @@ export default function SiteHeader({
   return (
     <header className="site-header">
       <div className="top-bar">
-        <Link href="/" className="brand" aria-label="Kijiji home">
-          <span className="brand-dots">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          kijiji
+        <Link href="/" className="brand" aria-label="Poorprice.com home">
+          <LogoLockup tone="on-light" height={40} alt="Poorprice.com" />
         </Link>
 
         <form className="search-area" onSubmit={submit} role="search">

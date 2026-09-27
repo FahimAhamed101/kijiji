@@ -36,8 +36,14 @@ variables.
   `MONGODB_URI_FALLBACK` (explicit `host1,host2,host3` seed list) populated — the
   connection helper falls back to it automatically.
 - Database/network calls and localhost curl need the sandbox disabled.
-- **Port 3000 is owned by another process on this machine.** Run the dev/prod server on
-  **3123**. Localhost curl must quote the glob: `curl --noproxy '*'`.
+- **Port 3000 is usually a stale `next dev` for THIS project**, left over from an earlier
+  session. It silently rewrites `.next` with dev artifacts, so any `next build` output gets
+  clobbered and `next start` then dies with `Cannot find module .next/server/pages/_error.js`
+  while serving 500s for every `/_next/static/**` chunk (page renders, but never hydrates).
+  If that happens: `netstat -ano | grep :3000` to get the PID, kill it, then rebuild.
+  Run verification on **3123**. Localhost curl must quote the glob: `curl --noproxy '*'`.
+- Kill a Windows PID from Git Bash with path conversion off, or `taskkill` mangles the flags:
+  `MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' taskkill /F /PID <pid>`.
 - The sandbox's fail-closed delete shim blocks removing `.next` from both bash `mv`/`rm`
   and PowerShell `Remove-Item`. Don't fight it — just run `next build`; Next overwrites the
   directory in place and the build succeeds without a manual clear.

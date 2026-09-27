@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                   <div className="flex items-center gap-3">
                     <span
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                      style={{ background: u.avatarColor || '#373373' }}
+                      style={{ background: u.avatarColor || '#0074F8' }}
                     >
                       {u.name.slice(0, 1).toUpperCase()}
                     </span>

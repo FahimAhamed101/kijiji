@@ -3,7 +3,7 @@ import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
 
 export const metadata = {
-  title: 'Page not found — Kijiji',
+  title: 'Page not found — Poorprice.com',
 }
 
 export default function NotFound() {
@@ -49,7 +49,7 @@ export default function NotFound() {
             <Link
               href="/browse"
               style={{
-                background: '#373373',
+                background: 'var(--brand-primary)',
                 color: '#fff',
                 padding: '10px 18px',
                 borderRadius: 8,

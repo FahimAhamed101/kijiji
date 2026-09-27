@@ -75,7 +75,7 @@ export default function ListingDetailPage() {
           <p style={{ color: '#78747C', marginBottom: 20 }}>
             This ad may have been removed or sold.
           </p>
-          <Link href="/browse" style={{ color: '#373373', fontWeight: 600 }}>
+          <Link href="/browse" style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>
             Browse all listings →
           </Link>
         </div>
@@ -85,7 +85,7 @@ export default function ListingDetailPage() {
   }
 
   const images = product.images?.length ? product.images : [primaryImage(product)]
-  const sellerName = product.seller?.name || 'Kijiji Member'
+  const sellerName = product.seller?.name || 'Poorprice Member'
   const similar = (similarData?.items ?? []).filter((p) => p._id !== product._id)
 
   return (
@@ -315,7 +315,7 @@ export default function ListingDetailPage() {
               </div>
               <div className="seller-stat-cell">
                 <strong>{product.seller?.verified ? '5 yrs' : 'New'}</strong>
-                <span>on Kijiji</span>
+                <span>on Poorprice.com</span>
               </div>
             </div>
 
@@ -391,7 +391,7 @@ export default function ListingDetailPage() {
       )}
 
       <div className="safety-tips-row">
-        Take steps to make your Kijiji transactions as secure as possible by following our suggested
+        Take steps to make your Poorprice.com transactions as secure as possible by following our suggested
         safety tips. <a href="#">Read our Safety Tips</a>
       </div>
 
@@ -610,7 +610,7 @@ function ContactForm({
       </Field>
 
       <p className="text-xs text-ink-muted">
-        {loading ? 'Sending…' : 'The seller receives this in their Kijiji inbox.'}
+        {loading ? 'Sending…' : 'The seller receives this in their Poorprice.com inbox.'}
       </p>
     </form>
   )

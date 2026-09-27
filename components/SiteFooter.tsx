@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { LogoLockup } from '@/components/Logo'
 
 function AppleLogo() {
   return (
@@ -21,13 +22,17 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
+        <div className="footer-brand">
+          <LogoLockup tone="on-dark" height={42} />
+        </div>
+
         <div className="footer-links">
           <div className="footer-column">
-            <h2>KIJIJI</h2>
+            <h2>POORPRICE</h2>
             <a href="#">About</a>
             <a href="#">Join Us</a>
             <a href="#">Member Benefits</a>
-            <a href="#">Advertise on Kijiji</a>
+            <a href="#">Advertise on Poorprice.com</a>
           </div>
           <div className="footer-column">
             <h2>EXPLORE</h2>
@@ -76,7 +81,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="footer-copyright">
-          <p>©2005–2026 Marktplaats BV.</p>
+          <p>©2005–2026 Poorprice.com.</p>
           <p>All rights reserved. Google Play and YouTube are trademarks of Google LLC.</p>
         </div>
       </div>

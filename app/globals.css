@@ -16,14 +16,15 @@
 }
 
 :root {
-  --kijiji-purple: #373373;
-  --kijiji-purple-dark: #2a2659;
-  --kijiji-purple-light: #524e8e;
-  --kijiji-text: #373373;
-  --kijiji-text-dark: #1c1a36;
+  /* Poorprice brand palette — accent values sampled from the logo artwork. */
+  --brand-primary: #0074f8;
+  --brand-primary-dark: #0058c8;
+  --brand-primary-light: #4d9dff;
+  --kijiji-text: #16203c;
+  --kijiji-text-dark: #0b1329;
   --kijiji-text-muted: #6b697d;
   --kijiji-border: #dcdce6;
-  --kijiji-link: #2d68c4;
+  --kijiji-link: #0074f8;
   --kijiji-yellow: #f8a726;
   color-scheme: light;
 }
@@ -56,7 +57,7 @@ button, input {
    ========================================================= */
 
 .site-header {
-  border-top: 3px solid var(--kijiji-purple);
+  border-top: 3px solid var(--brand-primary);
   background: #ffffff;
   border-bottom: 1px solid #e6e6ed;
 }
@@ -74,37 +75,16 @@ button, input {
   position: relative;
   display: inline-flex;
   align-items: center;
-  font-size: 38px;
-  font-weight: 800;
-  color: var(--kijiji-purple);
-  letter-spacing: -2.5px;
+  flex-shrink: 0;
   line-height: 1;
   text-decoration: none;
-  padding-top: 4px;
 }
 
-.brand-dots {
-  position: absolute;
-  top: -3px;
-  left: 28px;
-  display: flex;
-  gap: 3.5px;
-  pointer-events: none;
+.brand img {
+  display: block;
+  height: 40px;
+  width: auto;
 }
-
-.brand-dots i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.brand-dots i:nth-child(1) { background: #373373; transform: translateY(2px); }
-.brand-dots i:nth-child(2) { background: #f36c21; transform: translateY(-3px); }
-.brand-dots i:nth-child(3) { background: #e62d39; transform: translateY(-6px); }
-.brand-dots i:nth-child(4) { background: #f8a726; transform: translateY(-3px); }
-.brand-dots i:nth-child(5) { background: #43a776; transform: translateY(0px); }
-.brand-dots i:nth-child(6) { background: #a3439d; transform: translateY(2px); }
 
 /* Search Area */
 .search-area {
@@ -189,7 +169,7 @@ button, input {
 .category-picker span {
   font-size: 13px;
   font-weight: 600;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   white-space: nowrap;
 }
 
@@ -204,7 +184,7 @@ button, input {
   border: 0;
   border-left: 1px solid #c7c6d4;
   background: #fafaff;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -357,7 +337,7 @@ button, input {
 .category-menu-option .option-check {
   width: 14px;
   height: 14px;
-  stroke: var(--kijiji-purple);
+  stroke: var(--brand-primary);
   flex-shrink: 0;
 }
 
@@ -367,7 +347,7 @@ button, input {
 }
 
 .category-menu-option.is-selected .option-label {
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   font-weight: 700;
 }
 
@@ -416,7 +396,7 @@ button, input {
   gap: 6px;
   background: transparent;
   border: 0;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   font-weight: 500;
   cursor: pointer;
   padding: 4px 6px;
@@ -429,7 +409,7 @@ button, input {
 .location-btn svg {
   width: 16px;
   height: 16px;
-  stroke: var(--kijiji-purple);
+  stroke: var(--brand-primary);
 }
 
 .account-actions .divider {
@@ -439,7 +419,7 @@ button, input {
 }
 
 .account-actions a {
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -455,7 +435,7 @@ button, input {
   align-items: center;
   justify-content: center;
   padding: 9px 20px;
-  background: var(--kijiji-purple);
+  background: var(--brand-primary);
   color: #ffffff;
   font-weight: 700;
   font-size: 14px;
@@ -467,7 +447,7 @@ button, input {
 }
 
 .post-button:hover {
-  background: var(--kijiji-purple-dark);
+  background: var(--brand-primary-dark);
 }
 
 /* Category Navigation Bar */
@@ -486,7 +466,7 @@ button, input {
   gap: 22px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   flex: 1;
 }
 
@@ -502,7 +482,7 @@ button, input {
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  background: var(--kijiji-purple);
+  background: var(--brand-primary);
   color: #ffffff;
   font-size: 13px;
   font-weight: 700;
@@ -512,7 +492,7 @@ button, input {
 }
 
 .newcomers-pill:hover {
-  background: var(--kijiji-purple-dark);
+  background: var(--brand-primary-dark);
 }
 
 .trending-pill {
@@ -521,7 +501,7 @@ button, input {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   cursor: pointer;
 }
 
@@ -875,7 +855,7 @@ button, input {
   border-radius: 50%;
   background: #ffffff;
   border: 1px solid #dcdce6;
-  color: #373373;
+  color: var(--brand-primary);
   font-size: 22px;
   line-height: 1;
   display: flex;
@@ -925,7 +905,7 @@ button, input {
 .pill-grid a:hover {
   background: #f7f7fc;
   border-color: #c7c6d4;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
 }
 
 /* =========================================================
@@ -1005,7 +985,7 @@ button, input {
 .member-banner {
   margin: 36px 0 28px;
   padding: 34px 24px;
-  background: var(--kijiji-purple);
+  background: var(--brand-primary);
   color: #ffffff;
   text-align: center;
   border-radius: 4px;
@@ -1033,7 +1013,7 @@ button, input {
   border: 0;
   border-radius: 4px;
   background: #ffffff;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -1060,6 +1040,16 @@ button, input {
   width: min(960px, calc(100% - 40px));
   margin: 0 auto;
   padding: 56px 0 40px;
+}
+
+.footer-brand {
+  margin-bottom: 40px;
+}
+
+.footer-brand img {
+  display: block;
+  height: 42px;
+  width: auto;
 }
 
 .footer-links {
@@ -1221,6 +1211,9 @@ button, input {
   }
   .brand {
     font-size: 32px;
+  }
+  .brand img {
+    height: 32px;
   }
   .account-actions {
     order: 2;
@@ -1432,7 +1425,7 @@ button, input {
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -1522,7 +1515,7 @@ button, input {
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--kijiji-purple);
+  color: var(--brand-primary);
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -1789,7 +1782,7 @@ button, input {
 .send-message-btn {
   width: 100%;
   padding: 12px;
-  background: var(--kijiji-purple);
+  background: var(--brand-primary);
   color: #ffffff;
   border: 0;
   border-radius: 4px;
@@ -1801,7 +1794,7 @@ button, input {
 }
 
 .send-message-btn:hover {
-  background: var(--kijiji-purple-dark);
+  background: var(--brand-primary-dark);
 }
 
 .sidebar-disclaimer {

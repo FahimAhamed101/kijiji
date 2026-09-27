@@ -9,9 +9,9 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#3B1E6D", // deep plum-purple, primary brand accent
-          dark: "#2A1450",
-          light: "#5A3399",
+          DEFAULT: "#0074F8", // sampled from the Poorprice.com logo artwork
+          dark: "#0058C8",
+          light: "#4D9DFF",
         },
         ink: {
           DEFAULT: "#1C1B1F",

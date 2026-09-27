@@ -258,7 +258,7 @@ export default function Page() {
         </section>
 
         <div className="member-banner">
-          <h2>Kijiji&apos;s better when you&apos;re a member</h2>
+          <h2>Poorprice.com&apos;s better when you&apos;re a member</h2>
           <p>
             See more relevant listings, find the things you&apos;re looking for quicker, and more!
           </p>

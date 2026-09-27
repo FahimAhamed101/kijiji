@@ -268,7 +268,7 @@ export default function ProductForm({
               <Input
                 value={values.seller.name}
                 onChange={(e) => setSeller('name', e.target.value)}
-                placeholder="Kijiji Member"
+                placeholder="Poorprice Member"
               />
             </Field>
             <Field label="Phone">

@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { useGetMeQuery, useLoginMutation } from '@/store/authApi'
+import { LogoMark } from '@/components/Logo'
 import { Spinner } from '@/components/admin/ui'
 
 export default function AdminLoginPage() {
@@ -100,8 +101,8 @@ export default function AdminLoginPage() {
       <div className="relative w-full max-w-sm">
         {/* Header */}
         <div className="mb-6 text-center">
-          <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-xl font-bold text-white shadow-md shadow-brand/20 transition-transform hover:scale-105">
-            K
+          <span className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-canvas shadow-md shadow-brand/20 transition-transform hover:scale-105">
+            <LogoMark tone="on-light" height={38} alt="Poorprice.com" />
           </span>
           <h1 className="text-xl font-semibold tracking-tight text-ink">Admin sign in</h1>
           <p className="mt-1 text-sm text-ink-muted">

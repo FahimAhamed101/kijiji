@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import BrowseClient from '@/components/BrowseClient'
 
 export const metadata: Metadata = {
-  title: 'Browse listings — Kijiji',
+  title: 'Browse listings — Poorprice.com',
   description: 'Search and filter every listing on the marketplace.',
 }
 

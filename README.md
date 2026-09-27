@@ -1,4 +1,4 @@
-# Marketplace Clone (Next.js + MongoDB + RTK Query)
+# Poorprice.com (Next.js + MongoDB + RTK Query)
 
 A classifieds marketplace with a **public site** and a full **admin panel**,
 built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**,
@@ -146,13 +146,39 @@ store/
   types.ts                Shared types and formatting helpers
 components/
   Providers.tsx           Redux provider
+  Logo.tsx                Brand marks (LogoMark / LogoLockup)
   SiteHeader.tsx          Public header (search + category nav)
   SiteFooter.tsx          Public footer
+  CategoryPicker.tsx      Search-bar category dropdown
   BrowseClient.tsx        Browse/search results UI
   admin/                  Admin UI kit, shell, product form
+public/brand/             Poorprice logo assets (see Branding below)
 scripts/
   seed.ts                 CLI seed runner
 ```
+
+## Branding
+
+The logo master is a white-on-black lockup, so a single file cannot serve every
+surface — on the white header the white "P" stem, cart and wordmark all vanish.
+Two tone variants ship instead, and `components/Logo.tsx` picks between them:
+
+| Tone        | Use on            | Assets                             |
+| ----------- | ----------------- | ---------------------------------- |
+| `on-light`  | white surfaces    | `*-dark.webp` (dark artwork)       |
+| `on-dark`   | dark surfaces     | `*.webp` (light artwork)           |
+
+Pick by **the surface the mark sits on**, not by how the mark looks — the "dark"
+suffix means dark artwork, i.e. for light backgrounds.
+
+- `<LogoLockup />` — emblem + wordmark, for headers and sign-in screens.
+- `<LogoMark />` — emblem only, for tight spaces (admin sidebar, login badge).
+
+`public/brand/` holds the display assets as WebP (~37 KB each, down from ~300 KB
+as full-size PNG); `poorprice-lockup-dark.png` is kept as PNG because social
+crawlers are happiest with it. Favicons live at `public/icon-*.png` and
+`public/apple-icon.png`. The accent colour (`--brand-primary` in `globals.css`,
+`brand` in `tailwind.config.ts`) is sampled from the logo artwork — `#0074F8`.
 
 ## Scripts
 

@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react'
 import { useGetMeQuery, useLogoutMutation, useGetStatsQuery } from '@/store/authApi'
+import { LogoMark } from '@/components/Logo'
 import { Spinner } from './ui'
 import type { SessionUser } from '@/store/types'
 
@@ -96,7 +97,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <div className="hidden items-center gap-2 border-b border-line px-5 py-4 lg:flex">
               <BrandMark />
               <div className="leading-tight">
-                <p className="text-sm font-semibold text-ink">Kijiji Admin</p>
+                <p className="text-sm font-semibold text-ink">Poorprice Admin</p>
                 <p className="text-[11px] text-ink-muted">Marketplace control panel</p>
               </div>
             </div>
@@ -146,7 +147,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 <div className="flex items-center gap-2.5">
                   <span
                     className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white"
-                    style={{ background: user?.role === 'admin' ? '#373373' : '#7c3aed' }}
+                    style={{ background: user?.role === 'admin' ? '#0074F8' : '#64748B' }}
                   >
                     {user?.name?.slice(0, 1).toUpperCase() ?? '?'}
                   </span>
@@ -189,9 +190,5 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 }
 
 function BrandMark() {
-  return (
-    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
-      K
-    </span>
-  )
+  return <LogoMark tone="on-light" height={30} />
 }
