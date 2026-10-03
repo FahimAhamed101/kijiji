@@ -29,17 +29,12 @@ import {
   Th,
 } from '@/components/admin/ui'
 import type { Category } from '@/store/types'
+import { CATEGORY_GROUPS as GROUPS } from '@/lib/category-groups'
 
-const GROUPS = [
-  'Buy & Sell',
-  'Cars & Vehicles',
-  'Real Estate',
-  'Jobs',
-  'Services',
-  'Pets',
-  'Community',
-  'Vacation Rentals',
-]
+// Imported from the canonical list rather than duplicated here. The previous
+// local copy had drifted (it was missing 'Antiques & Collectibles'), so the
+// group <select> had no option matching that group — editing one of those
+// categories and saving silently reassigned it to the fallback option.
 
 type Draft = CategoryInput & { _id?: string }
 

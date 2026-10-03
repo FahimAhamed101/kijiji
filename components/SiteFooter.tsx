@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { LogoLockup } from '@/components/Logo'
+import { SITE_EMAIL, mailto } from '@/lib/site-config'
 
 function AppleLogo() {
   return (
@@ -78,6 +79,16 @@ export default function SiteFooter() {
             <a href="#" aria-label="X">𝕏</a>
             <a href="#" aria-label="YouTube">▶</a>
           </div>
+        </div>
+
+        <div className="footer-contact">
+          <h2>CONTACT</h2>
+          <p>
+            Questions, support, billing and payments all go to one address:
+          </p>
+          <a className="footer-email" href={mailto('Poorprice.com enquiry')}>
+            {SITE_EMAIL}
+          </a>
         </div>
 
         <div className="footer-copyright">

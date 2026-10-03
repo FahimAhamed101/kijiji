@@ -1,21 +1,17 @@
 import { Schema, model, models, type Model, type InferSchemaType } from 'mongoose'
+import { CATEGORY_GROUPS } from '@/lib/category-groups'
 
 /**
  * Top level navigation group shown in the header (Buy & Sell, Autos, ...).
  * Kept as a plain string field with a fixed set of values so categories can be
  * regrouped from the admin panel without a migration.
+ *
+ * The list itself lives in `lib/category-groups.ts` (no mongoose dependency) so
+ * client components can import it too; it is re-exported here for server code
+ * and for the schema enum below.
  */
-export const CATEGORY_GROUPS = [
-  'Buy & Sell',
-  'Cars & Vehicles',
-  'Real Estate',
-  'Jobs',
-  'Services',
-  'Pets',
-  'Community',
-  'Vacation Rentals',
-] as const
-export type CategoryGroup = (typeof CATEGORY_GROUPS)[number]
+export { CATEGORY_GROUPS }
+export type { CategoryGroup } from '@/lib/category-groups'
 
 const categorySchema = new Schema(
   {

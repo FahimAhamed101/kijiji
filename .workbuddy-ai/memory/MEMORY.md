@@ -18,6 +18,23 @@ Redux Toolkit Query · Zod · jose (JWT) · bcryptjs.
   with `injectEndpoints`, and every slice must be imported in `store/index.ts` before the
   store is created or its endpoints won't register.
 - Public pages use `components/SiteHeader.tsx` + `components/SiteFooter.tsx`.
+
+## Single sources of truth — never duplicate these
+- **`lib/category-groups.ts`** — `CATEGORY_GROUPS` / `CategoryGroup`. Lives outside
+  `lib/models/Category.ts` (which imports mongoose) so **client components can import it
+  without dragging the ODM into the browser bundle**; the model re-exports it for server
+  code and its schema enum. `lib/validators.ts` uses it for `z.enum`. A component that
+  keeps its own copy of this list is a bug waiting to happen: when a new group is added,
+  that component's `<select>` has no matching `<option>`, and saving a record in the new
+  group silently reassigns it to the fallback option (see `app/admin/(panel)/categories`).
+- **`lib/site-config.ts`** — `SITE_EMAIL` (default `poorprice@yahoo.com`,
+  `NEXT_PUBLIC_SITE_EMAIL` override), `PAYMENT_GATEWAY_EMAIL` (alias of `SITE_EMAIL`),
+  `SITE_NAME`, `SITE_URL`, `mailto()`. The client asked for **one email for everything** —
+  site contact, support and the payment gateway — so don't introduce a second address.
+  `app/layout.tsx` uses `SITE_URL` for `metadataBase`.
+- `components/Logo.tsx` holds the intrinsic sizes for the brand assets; they must match the
+  real files in `public/brand/` (mark `400x235`, lockup `900x192`, OG `900x473`).
+
 - `components/CategoryPicker.tsx` is the search-bar category dropdown. It is **controlled
   and uncontrolled**: pass `value`/`onChange` (as `/browse` does) and the caller owns state;
   omit them (as `/` does) and it owns its own selection and `router.push`es to `/browse`
@@ -25,6 +42,14 @@ Redux Toolkit Query · Zod · jose (JWT) · bcryptjs.
   union (`all` | `group` | `category`) that maps to `?category=<slug>` / `?group=<name>`.
   The panel is `position: fixed` with coordinates from `getBoundingClientRect()` so the
   search bar's `overflow: hidden` can't clip it.
+- `components/LocationPicker.tsx` mirrors that exact contract for `?location=<Province>`
+  (`''` = all of Canada), and deliberately reuses the `category-menu*` CSS so both dropdowns
+  look identical — don't add parallel dropdown styles. It's styled down to a text control by
+  `.location-picker` rules in `globals.css`, which **must stay below the `.category-picker`
+  block** to win on source order, and collapses to a pin-only button at ≤480px.
+- The homepage (`app/page.tsx`) has **hardcoded section rails**, one per group. A new group
+  gets no homepage presence until you add a `<section>` for it — the categories still work
+  in the picker and `/browse`, they're just not discoverable from `/`.
 
 ## Environment
 `.env.local` holds `MONGODB_URI`, `MONGODB_DB`, `MONGODB_URI_FALLBACK`, `JWT_SECRET`,
@@ -52,10 +77,26 @@ variables.
 - `Model.bulkWrite` rejects Mongoose `Query` objects — pass plain
   `{ updateOne: { filter, update, upsert } }` ops, typed as
   `Parameters<typeof Model.bulkWrite>[0]` so literal unions don't widen.
+- **Browser verification** (no agent-browser on Windows): Chromium is already cached at
+  `~/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe`; drive it with
+  `playwright-core` installed into `~/.workbuddy-ai/binaries/node/workspace`. From an
+  `.mjs` harness `NODE_PATH` does **not** work (ESM ignores it) — use
+  `createRequire('<workspace>/')` + `require('playwright-core')`. It must run with the
+  sandbox disabled, otherwise the script is killed with `SIGTERM` and **zero output**.
+  Full details in the `browser-verify-ui-change` skill.
+- The disk on this machine runs near-full (hit 100% mid-session); a screenshot write can
+  fail with `ENOSPC` while the app is fine.
 
 ## Seeded accounts
 - `admin@kijiji.local` / `admin123` — full access
 - `editor@kijiji.local` / `editor123` — content only, no deletes, no staff access
+
+## Seed data
+48 categories across 9 groups. The `Antiques & Collectibles` vertical (25 categories) uses
+**picsum placeholder images** (`/seed/<slug>/800/600`) because the homepage skips categories
+with an empty `image`; swap them for real photography when it exists. Products carry real
+`"City, Province"` locations (one per province/territory) so the location filter has
+something to match — all 24 were `'Canada'` before, which made that filter look broken.
 
 ## Roles
 `admin` — everything incl. deletes + staff. `editor` — create/edit listings & categories.

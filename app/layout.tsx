@@ -1,17 +1,21 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Providers from '@/components/Providers'
+import { SITE_NAME, SITE_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
-  title: 'Poorprice.com — Canada’s Marketplace',
+  // Without this Next resolves relative OG image URLs against localhost, so
+  // shared links pointed at an unreachable host.
+  metadataBase: new URL(SITE_URL),
+  title: `${SITE_NAME} — Canada’s Marketplace`,
   description:
     'Buy and sell locally on Poorprice.com — a responsive marketplace with a MongoDB-backed admin panel.',
-  applicationName: 'Poorprice.com',
+  applicationName: SITE_NAME,
   openGraph: {
-    title: 'Poorprice.com — Canada’s Marketplace',
+    title: `${SITE_NAME} — Canada’s Marketplace`,
     description: 'Buy and sell locally on Poorprice.com.',
-    siteName: 'Poorprice.com',
-    images: [{ url: '/brand/poorprice-lockup-dark.png', width: 900, height: 606 }],
+    siteName: SITE_NAME,
+    images: [{ url: '/brand/poorprice-lockup-dark.png', width: 900, height: 473 }],
   },
   icons: {
     icon: [

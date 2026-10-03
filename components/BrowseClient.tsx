@@ -7,6 +7,7 @@ import { useGetProductsQuery } from '@/store/productsApi'
 import { useGetCategoriesQuery } from '@/store/categoriesApi'
 import SiteHeader from '@/components/SiteHeader'
 import type { CategorySelection } from '@/components/CategoryPicker'
+import { PROVINCES } from '@/components/LocationPicker'
 import SiteFooter from '@/components/SiteFooter'
 import { priceLabel, primaryImage, timeAgo, type Product } from '@/store/types'
 
@@ -17,6 +18,8 @@ export type BrowseFilters = {
   featured: string
   sort: string
   page: number
+  /** Province/territory name, or `''` for all of Canada. */
+  location: string
 }
 
 const SORTS = [
@@ -38,11 +41,11 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
   // `filters` is seeded from the URL, but a search submitted from the header
   // navigates and re-renders the server component — so adopt the new params
   // rather than keeping stale state.
-  const { q: iq, category: ic, group: ig, featured: if_, sort: is, page: ip } = initial
+  const { q: iq, category: ic, group: ig, featured: if_, sort: is, page: ip, location: il } = initial
   useEffect(() => {
-    setFilters({ q: iq, category: ic, group: ig, featured: if_, sort: is, page: ip })
+    setFilters({ q: iq, category: ic, group: ig, featured: if_, sort: is, page: ip, location: il })
     setSearch(iq)
-  }, [iq, ic, ig, if_, is, ip])
+  }, [iq, ic, ig, if_, is, ip, il])
 
   // Debounce the free-text box.
   useEffect(() => {
@@ -61,6 +64,7 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
     if (filters.featured !== 'all') sp.set('featured', filters.featured)
     if (filters.sort !== 'newest') sp.set('sort', filters.sort)
     if (filters.page > 1) sp.set('page', String(filters.page))
+    if (filters.location) sp.set('location', filters.location)
     const qs = sp.toString()
     window.history.replaceState(null, '', qs ? `/browse?${qs}` : '/browse')
   }, [filters])
@@ -71,6 +75,7 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
       category: filters.category === 'all' ? undefined : filters.category,
       group: filters.group === 'all' ? undefined : filters.group,
       featured: filters.featured === 'all' ? undefined : filters.featured,
+      location: filters.location || undefined,
       sort: filters.sort,
       page: filters.page,
       limit: 24,
@@ -85,7 +90,8 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
     (filters.q ? 1 : 0) +
     (filters.category !== 'all' ? 1 : 0) +
     (filters.group !== 'all' ? 1 : 0) +
-    (filters.featured !== 'all' ? 1 : 0)
+    (filters.featured !== 'all' ? 1 : 0) +
+    (filters.location ? 1 : 0)
 
   const activeCategory = categories.find((c) => c.slug === filters.category)
 
@@ -95,7 +101,7 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
 
   function reset() {
     setSearch('')
-    setFilters({ q: '', category: 'all', group: 'all', featured: 'all', sort: 'newest', page: 1 })
+    setFilters({ q: '', category: 'all', group: 'all', featured: 'all', sort: 'newest', page: 1, location: '' })
   }
 
   const groups = Array.from(new Set(categories.map((c) => c.group)))
@@ -124,6 +130,8 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
         initialQuery={filters.q}
         category={pickerSelection}
         onCategoryChange={applyPickerSelection}
+        location={filters.location}
+        onLocationChange={(next) => patch({ location: next })}
       />
 
       <nav className="detail-breadcrumb-bar" aria-label="Breadcrumb">
@@ -155,7 +163,11 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
                     : 'All listings'}
             </h1>
             <p className="mt-1 text-sm text-ink-muted">
-              {isLoading ? 'Searching…' : `${data?.total ?? 0} listing${data?.total === 1 ? '' : 's'} found`}
+              {isLoading
+                ? 'Searching…'
+                : `${data?.total ?? 0} listing${data?.total === 1 ? '' : 's'} found${
+                    filters.location ? ` in ${filters.location}` : ''
+                  }`}
             </p>
           </div>
 
@@ -224,6 +236,30 @@ export default function BrowseClient({ initial }: { initial: BrowseFilters }) {
                     onChange={() => patch({ featured: 'true', category: 'all', group: 'all' })}
                   />
                 </div>
+              </div>
+
+              {/* Mirrors the header's location picker so the filter is visible
+                  and clearable from the results page itself. */}
+              <div>
+                <label
+                  htmlFor="browse-location"
+                  className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-muted"
+                >
+                  Location
+                </label>
+                <select
+                  id="browse-location"
+                  value={filters.location}
+                  onChange={(e) => patch({ location: e.target.value })}
+                  className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"
+                >
+                  <option value="">All of Canada</option>
+                  {PROVINCES.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {groupedCategories.map(({ group, items: cats }) => (

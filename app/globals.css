@@ -390,26 +390,47 @@ button, input {
   white-space: nowrap;
 }
 
-.location-btn {
-  display: inline-flex;
-  align-items: center;
+/* The location picker reuses the category picker's markup and dropdown panel,
+   but it lives in the account-actions row instead of inside the search bar — so
+   it drops the search bar's boxy white chrome and reads as a plain text control.
+   These rules must stay below the `.category-picker` block to win on order. */
+.location-picker {
+  width: auto;
+  max-width: 190px;
   gap: 6px;
-  background: transparent;
-  border: 0;
-  color: var(--brand-primary);
-  font-weight: 500;
-  cursor: pointer;
   padding: 4px 6px;
+  background: transparent;
+  border-left: 0;
+  border-radius: 6px;
 }
 
-.location-btn:hover {
-  text-decoration: underline;
+.location-picker:hover {
+  background: rgba(55, 51, 115, 0.06);
 }
 
-.location-btn svg {
+/* `.category-picker.is-open` (0,2,0) outranks the plain rule above. */
+.location-picker.is-open {
+  background: rgba(55, 51, 115, 0.08);
+}
+
+.location-picker svg {
   width: 16px;
   height: 16px;
   stroke: var(--brand-primary);
+}
+
+.location-picker .picker-text {
+  flex: 0 1 auto;
+}
+
+.location-picker small {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.location-picker .chevron {
+  font-size: 11px;
 }
 
 .account-actions .divider {
@@ -444,6 +465,20 @@ button, input {
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(55, 51, 115, 0.25);
   transition: background 0.15s ease;
+}
+
+/* `.account-actions a` (0,1,1) outranks `.post-button` (0,1,0), so the button's
+   white label was being repainted brand-blue on a brand-blue fill — an empty
+   blue pill. Scope these to win on specificity rather than reaching for
+   !important, and drop the link underline the anchor rules also add. */
+.account-actions a.post-button {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.account-actions a.post-button:hover {
+  background: var(--brand-primary-dark);
+  text-decoration: none;
 }
 
 .post-button:hover {
@@ -1167,8 +1202,48 @@ button, input {
   transform: translateY(-2px);
 }
 
-.footer-copyright {
+.footer-contact {
   margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.footer-contact h2 {
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  font-weight: 700;
+  color: #f8a726;
+  margin: 0;
+}
+
+.footer-contact p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer-email {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.footer-email:hover {
+  color: #7db8ff;
+  border-bottom-color: #7db8ff;
+}
+
+.footer-copyright {
+  margin-top: 28px;
   text-align: center;
   color: #f7d5c5;
   font-size: 11px;
@@ -1263,6 +1338,15 @@ button, input {
     padding: 0 10px;
   }
   .category-picker .picker-text, .category-picker .chevron {
+    display: none;
+  }
+  /* The location picker collapses to its pin alongside the category picker. */
+  .location-picker {
+    width: 36px;
+    padding: 4px;
+    justify-content: center;
+  }
+  .location-picker .picker-text, .location-picker .chevron {
     display: none;
   }
   .search-button {

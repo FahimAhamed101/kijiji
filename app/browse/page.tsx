@@ -29,6 +29,7 @@ export default function BrowsePage({ searchParams }: { searchParams: SearchParam
         featured: first(searchParams.featured) ?? 'all',
         sort: first(searchParams.sort) ?? 'newest',
         page: Number(first(searchParams.page) ?? 1) || 1,
+        location: first(searchParams.location) ?? '',
       }}
     />
   )

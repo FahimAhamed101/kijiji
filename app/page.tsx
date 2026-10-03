@@ -281,6 +281,20 @@ export default function Page() {
           />
           <ListingRow products={buySell.data?.items ?? []} />
         </section>
+
+        <section style={{ marginTop: '32px' }}>
+          <SectionHeading
+            title="Antiques &amp; Collectibles in Canada"
+            linkText="Browse All Collectibles"
+            linkHref="/browse?group=Antiques%20%26%20Collectibles"
+          />
+          {/* 24 categories in this vertical; show a rail's worth and let the
+              heading link carry people to the full list. */}
+          <CategoryTiles
+            categories={byGroup('Antiques & Collectibles').slice(0, 8)}
+            className="category-tiles-autos"
+          />
+        </section>
       </div>
 
       <SiteFooter />

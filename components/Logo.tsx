@@ -14,13 +14,13 @@ import Image from 'next/image'
 export type LogoTone = 'on-light' | 'on-dark'
 
 const MARK: Record<LogoTone, { src: string; w: number; h: number }> = {
-  'on-light': { src: '/brand/poorprice-mark-dark.webp', w: 400, h: 239 },
-  'on-dark': { src: '/brand/poorprice-mark.webp', w: 400, h: 239 },
+  'on-light': { src: '/brand/poorprice-mark-dark.webp', w: 400, h: 235 },
+  'on-dark': { src: '/brand/poorprice-mark.webp', w: 400, h: 235 },
 }
 
 const LOCKUP: Record<LogoTone, { src: string; w: number; h: number }> = {
-  'on-light': { src: '/brand/poorprice-horizontal-dark.webp', w: 900, h: 209 },
-  'on-dark': { src: '/brand/poorprice-horizontal.webp', w: 900, h: 209 },
+  'on-light': { src: '/brand/poorprice-horizontal-dark.webp', w: 900, h: 192 },
+  'on-dark': { src: '/brand/poorprice-horizontal.webp', w: 900, h: 192 },
 }
 
 /** The emblem alone — the shopping-cart "P". Use where space is tight. */

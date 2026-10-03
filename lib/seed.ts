@@ -25,12 +25,13 @@ export const CATEGORY_SEED: {
   { name: 'Pets', group: 'Pets', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80', featured: true },
   { name: 'Community', group: 'Community', image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80', featured: true },
   { name: 'Vacation Rentals', group: 'Vacation Rentals', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', featured: true },
+  { name: 'Antiques & Collectibles', group: 'Antiques & Collectibles', image: 'https://picsum.photos/seed/antiques-collectibles/800/600', featured: true },
 
   // Sub-categories used by the tiles on the homepage
   { name: 'Furniture', group: 'Buy & Sell', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80' },
   { name: 'Home - Outdoor & Garden', group: 'Buy & Sell', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80' },
   { name: 'Tools', group: 'Buy & Sell', image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Phones', group: 'Buy & Sell', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff025a5?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Phones', group: 'Buy & Sell', image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=80' },
   { name: 'Cars & Trucks', group: 'Cars & Vehicles', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80' },
   { name: 'Classic Cars', group: 'Cars & Vehicles', image: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&w=800&q=80' },
   { name: "RV's, Campers & Trailers", group: 'Cars & Vehicles', image: 'https://images.unsplash.com/photo-1527786356703-4b100091cd2c?auto=format&fit=crop&w=800&q=80' },
@@ -42,6 +43,46 @@ export const CATEGORY_SEED: {
   { name: 'Apartments & Condos for Rent', group: 'Real Estate', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80' },
   { name: 'Houses for Rent', group: 'Real Estate', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80' },
   { name: 'Houses for Sale', group: 'Real Estate', image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80' },
+
+  // Antiques & Collectibles. This is a vertical of its own rather than a
+  // sub-branch of Buy & Sell, so it gets its own group.
+  //
+  // Imagery below is seeded placeholder photography (picsum) so each category
+  // renders distinctly on the homepage rails — the homepage skips categories
+  // with an empty `image`. Swap these for real category photography when it
+  // exists; nothing else depends on the URLs.
+  ...(
+    [
+      'Watch',
+      'Clock',
+      'Coin',
+      'Medal',
+      'Bank Note',
+      'Gemstone',
+      'Antique',
+      'Collectible',
+      'Toys',
+      'Art & Paintings',
+      'Silver',
+      'Gold',
+      'Diamond',
+      'Jewellery',
+      'Scrap',
+      'Vintage',
+      'Garage Sale',
+      'Electric Bulb/Tube',
+      'Cutleries',
+      'Porcelain/China Bone',
+      'Soapstone',
+      'Leather Goods',
+      'Wooden Stuffs',
+      'Unknown Item',
+    ] as const
+  ).map((name) => ({
+    name,
+    group: 'Antiques & Collectibles' as CategoryGroup,
+    image: `https://picsum.photos/seed/${slugify(name)}/800/600`,
+  })),
 ]
 
 /* ------------------------------------------------------------------ */
@@ -70,19 +111,19 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'J&L Interlocking Landscaping Grass Installation',
     price: 0,
     priceOnRequest: true,
-    location: 'Canada',
+    location: 'Brantford, Ontario',
     image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&w=500&q=80',
     category: 'Home - Outdoor & Garden',
     featured: true,
     description:
       'Professional interlocking stone and artificial grass installation. Free on-site estimate, fully insured crew, workmanship warranty on every job.',
     tags: ['landscaping', 'interlocking', 'grass'],
-    seller: { name: 'J&L Landscaping', location: 'Canada', verified: true },
+    seller: { name: 'J&L Landscaping', location: 'Brantford, Ontario', verified: true },
   },
   {
     title: 'Semidetached home for Rent - Townhouse',
     price: 2850,
-    location: 'Canada',
+    location: 'Brampton, Ontario',
     image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=500&q=80',
     category: 'Houses for Rent',
     featured: true,
@@ -93,7 +134,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Unit 107 - Lonsdale - Step-In Tub Home',
     price: 1715,
-    location: 'Canada',
+    location: 'North Vancouver, British Columbia',
     image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=500&q=80',
     category: 'Apartments & Condos for Rent',
     featured: true,
@@ -104,7 +145,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Aussiedoodles miniature puppies',
     price: 1800,
-    location: 'Canada',
+    location: 'Calgary, Alberta',
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=500&q=80',
     category: 'Pets',
     featured: true,
@@ -116,7 +157,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'ASUS ROG gaming computer - RTX 4070',
     price: 9700,
-    location: 'Canada',
+    location: 'Mississauga, Ontario',
     image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=500&q=80',
     category: 'Phones',
     featured: true,
@@ -130,8 +171,8 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'Apple iPhone 12 Pro Max 512GB - Black',
     price: 0,
     priceOnRequest: true,
-    location: 'Canada',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff025a5?auto=format&fit=crop&w=500&q=80',
+    location: 'Toronto, Ontario',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=500&q=80',
     category: 'Phones',
     condition: 'used',
     brand: 'Apple',
@@ -142,7 +183,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Decorative Candlesticks (set of 3)',
     price: 40,
-    location: 'Canada',
+    location: 'Victoria, British Columbia',
     image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=500&q=80',
     category: 'Furniture',
     condition: 'used',
@@ -152,7 +193,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'The Ultimate Guide to Harry Potter - hardcover',
     price: 5,
-    location: 'Canada',
+    location: 'Ottawa, Ontario',
     image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'used',
@@ -162,7 +203,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: '23" Faux Silk Scarf Wrap Shawl',
     price: 6,
-    location: 'Canada',
+    location: 'Montreal, Quebec',
     image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'new',
@@ -172,7 +213,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Grey Fabric Sectional Sofa with Chaise',
     price: 899,
-    location: 'Canada',
+    location: 'Edmonton, Alberta',
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=80',
     category: 'Furniture',
     condition: 'like-new',
@@ -183,7 +224,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: '225/65R17 Winter Tires - set of 4',
     price: 25,
-    location: 'Canada',
+    location: 'Winnipeg, Manitoba',
     image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=500&q=80',
     category: 'Vehicle Parts, Tires, & Accessories',
     condition: 'used',
@@ -194,7 +235,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'Looking for 225/65 R17 Winter tires',
     price: 0,
     priceOnRequest: true,
-    location: 'Canada',
+    location: 'Iqaluit, Nunavut',
     image: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?auto=format&fit=crop&w=500&q=80',
     category: 'Vehicle Parts, Tires, & Accessories',
     description: 'Wanted: used set of 225/65 R17 winters. Cash ready, can pick up same day.',
@@ -203,7 +244,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Suzuki Motorcycle owners manual',
     price: 10,
-    location: 'Canada',
+    location: 'Yellowknife, Northwest Territories',
     image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80',
     category: 'Motorcycles',
     condition: 'used',
@@ -213,7 +254,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Razor 200 side by side',
     price: 5000,
-    location: 'Canada',
+    location: 'Kelowna, British Columbia',
     image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=500&q=80',
     category: 'ATVs & Snowmobiles',
     condition: 'used',
@@ -223,7 +264,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Bright 1 Bedroom Apartment for Rent',
     price: 1895,
-    location: 'Canada',
+    location: 'Toronto, Ontario',
     image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80',
     category: 'Apartments & Condos for Rent',
     description:
@@ -233,7 +274,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: '2 Bedroom, 2 Bathroom Condo',
     price: 500,
-    location: 'Canada',
+    location: 'Surrey, British Columbia',
     image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=500&q=80',
     category: 'Apartments & Condos for Rent',
     description: 'Roommate share in a 2 bed / 2 bath condo. Utilities and internet included.',
@@ -242,7 +283,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Acoustic guitar - solid spruce top',
     price: 50,
-    location: 'Canada',
+    location: 'London, Ontario',
     image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'used',
@@ -252,7 +293,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Epiphone Acoustic Guitar',
     price: 150,
-    location: 'Canada',
+    location: 'Regina, Saskatchewan',
     image: 'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'like-new',
@@ -263,7 +304,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'Rossignol 205cm waxless cross country skis',
     price: 150,
-    location: 'Canada',
+    location: 'Quebec City, Quebec',
     image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'used',
@@ -274,7 +315,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: 'GAMING PC - FOR SALE OR TRADE',
     price: 2000,
-    location: 'Canada',
+    location: 'Hamilton, Ontario',
     image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=500&q=80',
     category: 'Buy & Sell',
     condition: 'used',
@@ -286,7 +327,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
   {
     title: '225 65 17 winter rims only',
     price: 25,
-    location: 'Canada',
+    location: 'Halifax, Nova Scotia',
     image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=500&q=80',
     category: 'Vehicle Parts, Tires, & Accessories',
     condition: 'used',
@@ -297,7 +338,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'Cane Corso puppies, health tested parents',
     price: 0,
     priceOnRequest: true,
-    location: 'Brantford',
+    location: "St. John's, Newfoundland and Labrador",
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=500&q=80',
     category: 'Pets',
     description:
@@ -308,7 +349,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'Mobile Massage - introductory offer',
     price: 0,
     priceOnRequest: true,
-    location: 'Canada',
+    location: 'Charlottetown, Prince Edward Island',
     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=500&q=80',
     category: 'Services',
     description:
@@ -320,7 +361,7 @@ export const PRODUCT_SEED: ProductSeed[] = [
     title: 'AZ Truck Driver Wanted - full time',
     price: 0,
     priceOnRequest: true,
-    location: 'Canada',
+    location: 'Whitehorse, Yukon',
     image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=500&q=80',
     category: 'Jobs',
     description:
