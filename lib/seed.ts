@@ -376,6 +376,8 @@ export const PRODUCT_SEED: ProductSeed[] = [
 
 export type SeedResult = {
   admin: { email: string; created: boolean; name: string }
+  /** Extra admins configured via SEED_ADMIN2_* — empty when not configured. */
+  extraAdmins: { email: string; created: boolean }[]
   categories: { inserted: number; total: number }
   products: { inserted: number; total: number }
   messages: { inserted: number }
@@ -421,6 +423,38 @@ export async function runSeed(): Promise<SeedResult> {
       role: 'editor',
       avatarColor: '#7c3aed',
     })
+  }
+
+  /* ---- extra administrator(s) ---- */
+  // Supplied per deployment through SEED_ADMIN2_*. Read from the environment
+  // rather than hardcoded so a real address and password stay in .env.local
+  // (gitignored) instead of landing in source control.
+  //
+  // The password is only ever *set* on creation: re-seeding must not silently
+  // reset a password the owner has since changed in the panel.
+  const extraAdmins: { email: string; created: boolean }[] = []
+  const admin2Email = (process.env.SEED_ADMIN2_EMAIL || '').trim().toLowerCase()
+  const admin2Password = process.env.SEED_ADMIN2_PASSWORD || ''
+  if (admin2Email && admin2Password) {
+    const existingAdmin2 = await User.findOne({ email: admin2Email })
+    if (!existingAdmin2) {
+      await User.create({
+        name: process.env.SEED_ADMIN2_NAME || 'Administrator',
+        email: admin2Email,
+        passwordHash: await hashPassword(admin2Password),
+        role: 'admin',
+        avatarColor: '#0ea5e9',
+      })
+      extraAdmins.push({ email: admin2Email, created: true })
+    } else {
+      // Never demote an existing account, but make sure it can actually sign in.
+      if (!existingAdmin2.active || existingAdmin2.role !== 'admin') {
+        existingAdmin2.role = 'admin'
+        existingAdmin2.active = true
+        await existingAdmin2.save()
+      }
+      extraAdmins.push({ email: admin2Email, created: false })
+    }
   }
 
   /* ---- categories ---- */
@@ -532,6 +566,7 @@ export async function runSeed(): Promise<SeedResult> {
 
   return {
     admin: { email, created, name },
+    extraAdmins,
     categories: {
       inserted: catRes.upsertedCount ?? 0,
       total: await Category.countDocuments(),

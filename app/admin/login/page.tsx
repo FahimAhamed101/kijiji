@@ -9,7 +9,6 @@ import {
   EyeOff,
   CheckCircle2,
   ArrowRight,
-  ShieldCheck,
   AlertCircle,
 } from 'lucide-react'
 import { useGetMeQuery, useLoginMutation } from '@/store/authApi'
@@ -62,12 +61,6 @@ export default function AdminLoginPage() {
         'Unable to sign in. Please verify your credentials and try again.'
       setError(message)
     }
-  }
-
-  function fillCredentials(fillEmail: string, fillPass: string) {
-    setEmail(fillEmail)
-    setPassword(fillPass)
-    setError(null)
   }
 
   // If already authenticated and redirecting, show a smooth splash
@@ -152,7 +145,7 @@ export default function AdminLoginPage() {
                   disabled={isSubmitting || isRedirecting}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@kijiji.local"
+                  placeholder="you@example.com"
                   className="w-full rounded-lg border border-line bg-canvas py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted/60 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 disabled:bg-surface disabled:opacity-75 transition-colors"
                 />
               </div>
@@ -224,45 +217,7 @@ export default function AdminLoginPage() {
               )}
             </button>
 
-            {/* Clickable Quick-fill Accounts */}
-            <div className="rounded-lg border border-line/60 bg-surface/70 p-3">
-              <div className="flex items-center gap-1.5 text-xs font-medium text-ink-soft">
-                <ShieldCheck className="h-3.5 w-3.5 text-brand" />
-                <span>Quick-fill demo accounts</span>
-              </div>
-              <p className="mt-1 text-[11px] text-ink-muted">
-                Click any role below to prefill credentials:
-              </p>
-              <div className="mt-2.5 flex flex-col gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('admin@kijiji.local', 'admin123')}
-                  className="flex items-center justify-between rounded-md border border-line bg-canvas px-2.5 py-1.5 text-left text-xs transition-colors hover:border-brand/40 hover:bg-brand/5 focus:outline-none"
-                >
-                  <div className="min-w-0">
-                    <p className="font-semibold text-ink">Super Admin</p>
-                    <p className="font-mono text-[11px] text-ink-muted">admin@kijiji.local</p>
-                  </div>
-                  <span className="shrink-0 rounded bg-brand/10 px-1.5 py-0.5 text-[10px] font-medium text-brand">
-                    admin123
-                  </span>
-                </button>
 
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('editor@kijiji.local', 'editor123')}
-                  className="flex items-center justify-between rounded-md border border-line bg-canvas px-2.5 py-1.5 text-left text-xs transition-colors hover:border-brand/40 hover:bg-brand/5 focus:outline-none"
-                >
-                  <div className="min-w-0">
-                    <p className="font-semibold text-ink">Content Editor</p>
-                    <p className="font-mono text-[11px] text-ink-muted">editor@kijiji.local</p>
-                  </div>
-                  <span className="shrink-0 rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
-                    editor123
-                  </span>
-                </button>
-              </div>
-            </div>
           </form>
         </div>
 

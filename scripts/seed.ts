@@ -47,14 +47,29 @@ async function main() {
 
   console.log('')
   console.log('  ✓ admin user :', result.admin.email, result.admin.created ? '(created)' : '(already existed)')
+  for (const extra of result.extraAdmins) {
+    console.log('  ✓ admin user :', extra.email, extra.created ? '(created)' : '(already existed)')
+  }
   console.log('  ✓ categories :', result.categories.total, 'total,', result.categories.inserted, 'new')
   console.log('  ✓ listings   :', result.products.total, 'total,', result.products.inserted, 'new')
   console.log('  ✓ messages   :', result.messages.inserted, 'new')
   console.log('  ✓ reports    :', result.reports.inserted, 'new')
   console.log('')
   console.log('  Sign in at /admin/login')
-  console.log('    email    :', process.env.SEED_ADMIN_EMAIL || 'admin@kijiji.local')
-  console.log('    password :', process.env.SEED_ADMIN_PASSWORD || 'admin123')
+
+  // Every account this seed can sign you in with. Printed on purpose: this is a
+  // local operator script, and the credentials are also listed (read-only) on
+  // the login page itself.
+  const logins: [string, string][] = [
+    [result.admin.email, process.env.SEED_ADMIN_PASSWORD || 'admin123'],
+    ['editor@kijiji.local', 'editor123'],
+  ]
+  if (process.env.SEED_ADMIN2_EMAIL && process.env.SEED_ADMIN2_PASSWORD) {
+    logins.push([process.env.SEED_ADMIN2_EMAIL, process.env.SEED_ADMIN2_PASSWORD])
+  }
+  for (const [loginEmail, loginPassword] of logins) {
+    console.log('   ', loginEmail.padEnd(28), loginPassword)
+  }
   console.log('')
 
   await mongoose.disconnect()
