@@ -1,5 +1,6 @@
 import dbConnect from './mongodb'
 import User from './models/User'
+import Member from './models/Member'
 import Category, { type CategoryGroup } from './models/Category'
 import Product, { type ProductStatus, type ProductCondition } from './models/Product'
 import Message from './models/Message'
@@ -378,6 +379,8 @@ export type SeedResult = {
   admin: { email: string; created: boolean; name: string }
   /** Extra admins configured via SEED_ADMIN2_* — empty when not configured. */
   extraAdmins: { email: string; created: boolean }[]
+  /** Demo storefront member, for trying the buyer flow. */
+  demoMember: { email: string; created: boolean }
   categories: { inserted: number; total: number }
   products: { inserted: number; total: number }
   messages: { inserted: number }
@@ -457,6 +460,26 @@ export async function runSeed(): Promise<SeedResult> {
     }
   }
 
+  /* ---- demo storefront member ---- */
+  // So the buyer journey (sign in → cart → checkout → order history) can be
+  // exercised straight after seeding, without registering first. Like the staff
+  // accounts, the password is only set on creation — re-seeding never resets a
+  // password someone has since changed.
+  const demoMemberEmail = 'shopper@poorprice.com'
+  let demoMemberCreated = false
+  if (!(await Member.findOne({ email: demoMemberEmail }))) {
+    await Member.create({
+      name: 'Demo Shopper',
+      email: demoMemberEmail,
+      passwordHash: await hashPassword('shopper123'),
+      phone: '416-555-0142',
+      location: 'Toronto, Ontario',
+      avatarColor: '#0f766e',
+      lastLoginAt: new Date(),
+    })
+    demoMemberCreated = true
+  }
+
   /* ---- categories ---- */
   // NOTE: bulkWrite needs plain operation objects, not mongoose Query instances.
   // The explicit array type gives TS the literal unions it needs for `group`.
@@ -506,7 +529,7 @@ export async function runSeed(): Promise<SeedResult> {
             urgent: p.urgent ?? false,
             tags: p.tags ?? [],
             seller: {
-              name: p.seller?.name ?? 'Kijiji Member',
+              name: p.seller?.name ?? 'Poorprice Member',
               phone: p.seller?.phone ?? '',
               email: p.seller?.email ?? '',
               location: p.seller?.location ?? p.location,
@@ -567,6 +590,7 @@ export async function runSeed(): Promise<SeedResult> {
   return {
     admin: { email, created, name },
     extraAdmins,
+    demoMember: { email: demoMemberEmail, created: demoMemberCreated },
     categories: {
       inserted: catRes.upsertedCount ?? 0,
       total: await Category.countDocuments(),

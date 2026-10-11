@@ -105,11 +105,149 @@ export type DashboardStats = {
   }
   categories: { total: number; active: number }
   users: { total: number }
+  members: { total: number }
+  orders: { total: number; paid: number; pending: number; revenue: number }
   messages: { total: number; unread: number }
   reports: { open: number }
   views: { total: number }
   recentProducts: Product[]
+  recentOrders: Order[]
   categoriesBreakdown: { name: string; count: number }[]
+}
+
+/* ------------------------------------------------------------------ */
+/* Storefront accounts, cart and orders                                */
+/* ------------------------------------------------------------------ */
+
+export type Member = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  location: string
+  avatarColor: string
+  createdAt: string
+}
+
+export type OrderStatus =
+  | 'pending'
+  | 'paid'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'refunded'
+
+export type PaymentProvider = 'stripe' | 'paypal' | 'demo'
+
+export type OrderItem = {
+  product: string | null
+  title: string
+  slug: string
+  price: number
+  quantity: number
+  image: string
+  sellerName: string
+}
+
+export type OrderAddress = {
+  name: string
+  email: string
+  phone: string
+  line1: string
+  line2: string
+  city: string
+  province: string
+  postalCode: string
+  country: string
+}
+
+export type OrderPayment = {
+  provider: PaymentProvider
+  status: 'unpaid' | 'paid' | 'failed' | 'refunded'
+  reference: string
+  amount: number
+  paidAt: string | null
+}
+
+export type Order = {
+  id: string
+  orderNumber: string
+  status: OrderStatus
+  note: string
+  items: OrderItem[]
+  itemCount: number
+  subtotal: number
+  shipping: number
+  tax: number
+  total: number
+  currency: string
+  shippingAddress: OrderAddress
+  payment: OrderPayment
+  customerName: string
+  customerEmail: string
+  member: string | null
+  createdAt: string | null
+  updatedAt: string | null
+}
+
+/** One option in the checkout payment-method list. */
+export type PaymentProviderInfo = {
+  id: PaymentProvider
+  label: string
+  enabled: boolean
+  mode: 'live' | 'sandbox' | 'demo'
+  note: string
+}
+
+/** Why a gateway is listed but cannot take money. */
+export type UnavailableReason = 'not-configured' | 'rejected'
+
+/**
+ * A gateway checkout still lists as an option, with the reason it can't be used.
+ * "No keys on the server" and "the gateway refused the keys" need different
+ * fixes, so they must not look alike. See `lib/payments.ts`.
+ */
+export type UnavailableProviderInfo = {
+  id: PaymentProvider
+  label: string
+  reason: UnavailableReason
+  /** Alias for `reason === 'rejected'`. */
+  rejected: boolean
+  /** Short state, safe to show. */
+  note: string
+  /** The gateway's own message, redacted server-side. */
+  detail?: string
+  /** Env vars to set in `.env.local`. */
+  envVars: string[]
+}
+
+export type PaymentsConfig = {
+  providers: PaymentProviderInfo[]
+  anyLive: boolean
+  unavailable?: UnavailableProviderInfo[]
+  currency: string
+  shippingFlat: number
+  freeShippingOver: number
+  taxRate: number
+}
+
+/**
+ * A payment option as checkout renders it: either a method that can take money,
+ * or one that is listed but broken. `problem` carries the reason for the latter.
+ */
+export type CheckoutPayOption = {
+  id: PaymentProvider
+  label: string
+  note: string
+  mode: 'live' | 'sandbox' | 'demo'
+  /** `null` when this method can take money; otherwise why it can't. */
+  problem: {
+    reason: UnavailableReason
+    rejected: boolean
+    detail?: string
+    envVars: string[]
+  } | null
 }
 
 export type ProductQuery = {
@@ -179,4 +317,55 @@ export function timeAgo(value?: string | null): string {
   const days = Math.floor(hours / 24)
   if (days < 30) return `${days} day${days === 1 ? '' : 's'} ago`
   return formatDate(value)
+}
+
+const ORDER_STATUS_LABEL: Record<string, string> = {
+  pending: 'Awaiting payment',
+  paid: 'Paid',
+  processing: 'Processing',
+  shipped: 'Shipped',
+  delivered: 'Delivered',
+  cancelled: 'Cancelled',
+  refunded: 'Refunded',
+}
+
+export function orderStatusLabel(status: string): string {
+  return ORDER_STATUS_LABEL[status] ?? status
+}
+
+const PROVIDER_LABEL: Record<string, string> = {
+  stripe: 'Card (Stripe)',
+  paypal: 'PayPal',
+  demo: 'Demo payment',
+}
+
+export function paymentProviderLabel(provider: string): string {
+  return PROVIDER_LABEL[provider] ?? provider
+}
+
+/** Tailwind classes for an order-status pill, in the light admin palette. */
+export function orderStatusTone(status: string): string {
+  switch (status) {
+    case 'paid':
+    case 'delivered':
+      return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    case 'processing':
+    case 'shipped':
+      return 'bg-sky-50 text-sky-700 border-sky-200'
+    case 'cancelled':
+    case 'refunded':
+      return 'bg-red-50 text-red-700 border-red-200'
+    default:
+      return 'bg-amber-50 text-amber-700 border-amber-200'
+  }
+}
+
+/** "$1,234.56" — matches the server's formatting so totals never look off by a cent. */
+export function money(amount: number, currency = 'CAD'): string {
+  return new Intl.NumberFormat('en-CA', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)
 }

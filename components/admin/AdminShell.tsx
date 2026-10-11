@@ -13,6 +13,7 @@ import {
   LogOut,
   ExternalLink,
   Menu,
+  ShoppingCart,
   X,
 } from 'lucide-react'
 import { useGetMeQuery, useLogoutMutation, useGetStatsQuery } from '@/store/authApi'
@@ -44,6 +45,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const navItems: NavItem[] = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/admin/products', label: 'Listings', icon: Package, badge: stats?.products.total },
+    { href: '/admin/orders', label: 'Orders', icon: ShoppingCart, badge: stats?.orders.total },
     { href: '/admin/categories', label: 'Categories', icon: FolderTree, badge: stats?.categories.total },
     { href: '/admin/messages', label: 'Messages', icon: Mail, badge: stats?.messages.unread },
     { href: '/admin/reports', label: 'Reports', icon: Flag, badge: stats?.reports.open },

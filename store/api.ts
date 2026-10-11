@@ -16,7 +16,7 @@ export const api = createApi({
     baseUrl: '/api',
     credentials: 'include',
   }),
-  tagTypes: ['Product', 'Category', 'User', 'Message', 'Report', 'Stats', 'Me'],
+  tagTypes: ['Product', 'Category', 'User', 'Message', 'Report', 'Stats', 'Me', 'Member', 'Order'],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: 30,
 })

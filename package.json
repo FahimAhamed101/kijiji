@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "check:gateways": "node scripts/check-gateways.mjs",
+    "smoke": "npm run smoke:api && npm run smoke:render && npm run smoke:browser",
+    "smoke:api": "node scripts/smoke-commerce.mjs",
+    "smoke:render": "node scripts/smoke-render.mjs",
+    "smoke:browser": "node scripts/smoke-browser.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",

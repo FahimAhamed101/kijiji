@@ -9,6 +9,8 @@ import SiteHeader from '@/components/SiteHeader'
 import type { CategorySelection } from '@/components/CategoryPicker'
 import { PROVINCES } from '@/components/LocationPicker'
 import SiteFooter from '@/components/SiteFooter'
+import { AddToCartIconButton } from '@/components/cart-actions'
+import { WishlistIconButton } from '@/components/wishlist-actions'
 import { priceLabel, primaryImage, timeAgo, type Product } from '@/store/types'
 
 export type BrowseFilters = {
@@ -393,6 +395,9 @@ function FilterRadio({
 function ProductCard({ product }: { product: Product }) {
   return (
     <article className="similar-card" role="listitem">
+      {/* The anchor covers only the thumb and title. The footer sits outside it
+          so the add-to-cart button is a sibling, not a button inside a link —
+          which would be invalid HTML and would navigate on click. */}
       <Link href={`/listing/${product.slug}`} className="block">
         <div className="card-thumb">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -401,12 +406,18 @@ function ProductCard({ product }: { product: Product }) {
         <div className="similar-card-body">
           <p title={product.title}>{product.title}</p>
           <small>{product.location}</small>
-          <div className="similar-card-footer">
-            <strong>{priceLabel(product)}</strong>
-            <span className="text-[11px] text-ink-muted">{timeAgo(product.createdAt)}</span>
-          </div>
         </div>
       </Link>
+      <div className="similar-card-body similar-card-body-footer">
+        <div className="similar-card-footer">
+          <strong>{priceLabel(product)}</strong>
+          <div className="similar-card-actions">
+            <span className="text-[11px] text-ink-muted">{timeAgo(product.createdAt)}</span>
+            <WishlistIconButton product={product} />
+            <AddToCartIconButton product={product} />
+          </div>
+        </div>
+      </div>
     </article>
   )
 }

@@ -7,6 +7,9 @@ import { useGetProductQuery, useGetProductsQuery } from '@/store/productsApi'
 import { useCreateMessageMutation, useCreateReportMutation } from '@/store/inboxApi'
 import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
+import BuyBox from '@/components/BuyBox'
+import { AddToCartIconButton } from '@/components/cart-actions'
+import { WishlistIconButton, useWishlistToggle } from '@/components/wishlist-actions'
 import { Modal, Button, Field, Input, Textarea, Alert } from '@/components/admin/ui'
 import {
   categoryName,
@@ -46,7 +49,8 @@ export default function ListingDetailPage() {
 
   const [phoneRevealed, setPhoneRevealed] = useState(false)
   const [showMoreDesc, setShowMoreDesc] = useState(false)
-  const [saved, setSaved] = useState(false)
+  // Backed by the real wishlist, so the toolbar and the buy box always agree.
+  const { saved, toggle: toggleSaved } = useWishlistToggle(product)
   const [messageOpen, setMessageOpen] = useState(false)
   const [reportOpen, setReportOpen] = useState(false)
   const [sent, setSent] = useState(false)
@@ -150,7 +154,9 @@ export default function ListingDetailPage() {
             <button
               type="button"
               className="action-outline-btn"
-              onClick={() => setSaved(!saved)}
+              onClick={toggleSaved}
+              aria-pressed={saved}
+              aria-label={saved ? 'Remove from favourites' : 'Save to favourites'}
               style={saved ? { borderColor: '#e53935', color: '#e53935' } : {}}
             >
               <svg
@@ -335,6 +341,8 @@ export default function ListingDetailPage() {
 
         {/* RIGHT SIDEBAR */}
         <aside className="detail-right-col">
+          <BuyBox product={product} />
+
           <div className="detail-sidebar-card">
             <div className="sidebar-seller-header">
               <div className="seller-avatar-circle">{sellerName.slice(0, 1).toUpperCase()}</div>
@@ -491,7 +499,6 @@ export default function ListingDetailPage() {
 /* ------------------------------------------------------------------ */
 
 function SimilarCard({ product }: { product: Product }) {
-  const [liked, setLiked] = useState(false)
   return (
     <article className="similar-card" role="listitem">
       <Link href={`/listing/${product.slug}`}>
@@ -507,24 +514,10 @@ function SimilarCard({ product }: { product: Product }) {
         <small>{product.location}</small>
         <div className="similar-card-footer">
           <strong>{priceLabel(product)}</strong>
-          <button
-            type="button"
-            className="heart-btn"
-            onClick={() => setLiked((v) => !v)}
-            aria-label="Save listing"
-            style={liked ? { color: '#e53935' } : {}}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill={liked ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-            </svg>
-          </button>
+          <div className="similar-card-actions">
+            <AddToCartIconButton product={product} />
+            <WishlistIconButton product={product} />
+          </div>
         </div>
       </div>
     </article>

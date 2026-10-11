@@ -1,104 +1,132 @@
-# kijiji-clone — project notes
+# kijiji-clone (Poorprice.com)
 
-## Stack
-Next.js 14 (App Router) · TypeScript · Tailwind · MongoDB via Mongoose 8 ·
-Redux Toolkit Query · Zod · jose (JWT) · bcryptjs.
+## Stack / commands
+Next.js 14 App Router · TS · Tailwind · MongoDB/Mongoose 8 · RTK Query · Zod · jose · bcryptjs.
+`npm run dev|build|start` · `typecheck` · `seed` (idempotent, tsx, reads `.env.local`) ·
+`smoke` (= api + render + browser) · `check:gateways`. Suites take `BASE_URL`; default **3123**.
 
-## Commands
-- `npm run dev` / `npm run build` / `npm run start`
-- `npm run typecheck` — `tsc --noEmit`
-- `npm run seed` — idempotent DB seed (reads `.env.local` via `scripts/seed.ts`, tsx)
+## Layout
+- `app/api/**` handlers, all `runtime='nodejs'`. `app/admin/(panel)/**` behind the guard in
+  `(panel)/layout.tsx`; `app/admin/login` is outside the group (public).
+- `lib/models/*` one model per file; `lib/validators.ts` = Zod schemas.
+- `store/*` RTK Query: one shared `api`, endpoints per domain via `injectEndpoints`.
+  **Every slice must be imported in `store/index.ts` before the store is created** or its
+  endpoints silently never register.
+- Public pages use `SiteHeader` + `SiteFooter`; `components/StoreHydrator.tsx` (mounted once in
+  `app/layout.tsx`) loads the persisted cart **and** wishlist — add future persisted slices there.
+- Header order: `LocationPicker`, `AccountMenu`, `CartButton`, `WishlistButton`, Post ad —
+  wishlist stays **immediately after cart** (client request).
 
-## Layout conventions
-- `app/api/**` — REST route handlers, all `runtime = 'nodejs'`.
-- `app/admin/(panel)/**` — behind the auth guard in `(panel)/layout.tsx`;
-  `app/admin/login` sits outside the group so it stays public.
-- `lib/models/*` — one file per Mongoose model; `lib/validators.ts` holds the Zod schemas.
-- `store/*` — RTK Query. One shared `api` instance; endpoints are contributed per domain
-  with `injectEndpoints`, and every slice must be imported in `store/index.ts` before the
-  store is created or its endpoints won't register.
-- Public pages use `components/SiteHeader.tsx` + `components/SiteFooter.tsx`.
-
-## Single sources of truth — never duplicate these
-- **`lib/category-groups.ts`** — `CATEGORY_GROUPS` / `CategoryGroup`. Lives outside
-  `lib/models/Category.ts` (which imports mongoose) so **client components can import it
-  without dragging the ODM into the browser bundle**; the model re-exports it for server
-  code and its schema enum. `lib/validators.ts` uses it for `z.enum`. A component that
-  keeps its own copy of this list is a bug waiting to happen: when a new group is added,
-  that component's `<select>` has no matching `<option>`, and saving a record in the new
-  group silently reassigns it to the fallback option (see `app/admin/(panel)/categories`).
+## Single sources of truth — never duplicate
+- **`lib/category-groups.ts`** (`CATEGORY_GROUPS`) sits outside `lib/models/Category.ts` (which
+  imports mongoose) so clients can use it without the ODM in the browser bundle; the model
+  re-exports it. A component keeping its own copy is a latent bug: add a group and its `<select>`
+  has no matching `<option>`, so saving silently reassigns to the fallback.
 - **`lib/site-config.ts`** — `SITE_EMAIL` (default `poorprice@yahoo.com`,
-  `NEXT_PUBLIC_SITE_EMAIL` override), `PAYMENT_GATEWAY_EMAIL` (alias of `SITE_EMAIL`),
-  `SITE_NAME`, `SITE_URL`, `mailto()`. The client asked for **one email for everything** —
-  site contact, support and the payment gateway — so don't introduce a second address.
-  `app/layout.tsx` uses `SITE_URL` for `metadataBase`.
-- `components/Logo.tsx` holds the intrinsic sizes for the brand assets; they must match the
-  real files in `public/brand/` (mark `400x235`, lockup `900x192`, OG `900x473`).
+  `NEXT_PUBLIC_SITE_EMAIL` override), `PAYMENT_GATEWAY_EMAIL` alias, `SITE_NAME`, `SITE_URL`,
+  `mailto()`. Client wants **one email for everything** — no second address.
+- `components/CategoryPicker.tsx` is **controlled and uncontrolled**: pass `value`/`onChange` and
+  the caller owns state; omit them and it self-manages and `router.push`es to `/browse`. Emits a
+  `CategorySelection` union → `?category=<slug>` / `?group=<name>`. `LocationPicker.tsx` mirrors
+  this for `?location=<Province>` (`''` = all Canada) and reuses the `category-menu*` CSS — its
+  `.location-picker` rules in `globals.css` must stay **below** the `.category-picker` block to
+  win on source order.
+- Homepage (`app/page.tsx`) has **hardcoded section rails**, one per group — a new group has no
+  homepage presence until you add a `<section>` (it still works in the picker/`/browse`).
 
-- `components/CategoryPicker.tsx` is the search-bar category dropdown. It is **controlled
-  and uncontrolled**: pass `value`/`onChange` (as `/browse` does) and the caller owns state;
-  omit them (as `/` does) and it owns its own selection and `router.push`es to `/browse`
-  on pick. `SiteHeader` branches on `category !== undefined`. It emits a `CategorySelection`
-  union (`all` | `group` | `category`) that maps to `?category=<slug>` / `?group=<name>`.
-  The panel is `position: fixed` with coordinates from `getBoundingClientRect()` so the
-  search bar's `overflow: hidden` can't clip it.
-- `components/LocationPicker.tsx` mirrors that exact contract for `?location=<Province>`
-  (`''` = all of Canada), and deliberately reuses the `category-menu*` CSS so both dropdowns
-  look identical — don't add parallel dropdown styles. It's styled down to a text control by
-  `.location-picker` rules in `globals.css`, which **must stay below the `.category-picker`
-  block** to win on source order, and collapses to a pin-only button at ≤480px.
-- The homepage (`app/page.tsx`) has **hardcoded section rails**, one per group. A new group
-  gets no homepage presence until you add a `<section>` for it — the categories still work
-  in the picker and `/browse`, they're just not discoverable from `/`.
+## Payments (`lib/payments.ts`) — Stripe LIVE in test mode
+- `.env.local` has a working **`STRIPE_SECRET_KEY=sk_test_…`** (verified via `/v1/balance`).
+  **PayPal still fails**: 401 `invalid_client`, client id 81 chars (normally 80) → `rejected`.
+- The `pk_test_…` publishable key is **unused** — Checkout redirects to Stripe's hosted page, so
+  the app never renders a card form. Don't add Stripe.js just to use it.
+- REST + `fetch`, **no vendor SDK**, so no secret can reach the client bundle.
+- **A gateway is verified before it is offered** (`/v1/balance`; PayPal OAuth). Cache 10 min ok /
+  60 s fail → `paymentsConfig()` and `providerEnabled()` are **async**. `PAYMENTS_DEMO=auto`
+  suppresses demo the moment `anyLive` is true, so presence-only detection would let one bad key
+  disable demo *and* offer a dead gateway. Never revert to `Boolean(envVar)`.
+- **An unusable gateway is listed, not hidden.** `unavailable[]` carries `label`, `reason`
+  (`not-configured`|`rejected`), `note`, `detail`, `envVars`; checkout shows them as selectable
+  options with a `Keys missing`/`Keys rejected` chip, the exact fix, and Place order disabled.
+  `redact()` masks 16+ char runs (Stripe echoes the key). **Do not go back to hiding broken
+  gateways** — the client asked for this.
+- **`providerEnabled('demo')` must NOT be special-cased.** It used to `return true` always, so a
+  live site settled a fake "paid" order for anyone posting `provider:"demo"` — the UI hid it, the
+  API honoured it. It now asks `paymentsConfig()`. Verified: `auto` + live Stripe →
+  `POST {provider:'demo'}` = **400**.
+- `POST /api/checkout` → `{mode:'demo', …, order}` or `{mode:'redirect', url, …}`.
+  `shippingAddress` uses **`line1`** (not `street`); `orderView()` exposes `payment.{provider,status}`.
+- **`npm run check:gateways`** — reads `.env.local`, probes both gateways, flags mis-shaped
+  values, retries PayPal swapped, exits 1 on any rejection. Use it *before* debugging checkout.
 
-## Environment
-`.env.local` holds `MONGODB_URI`, `MONGODB_DB`, `MONGODB_URI_FALLBACK`, `JWT_SECRET`,
-`SEED_SECRET`, `SEED_ADMIN_*`. It is gitignored — keep `.env.example` in sync when adding
-variables.
+## Verification (4 suites, ~198 checks)
+`smoke-commerce.mjs` (API: pricing, tamper resistance, auth realms, order state machine,
+payment-config truth, real Stripe session creation) · `smoke-render.mjs` (SSR HTML) ·
+`smoke-browser.mjs` (Chromium: purchase + account + admin + wishlist; shots to `.shots/`) ·
+`check-staff-signin.mjs`.
+- **Both smoke suites require `PAYMENTS_DEMO=on` on the server** and FATAL-exit otherwise. The
+  order lifecycle needs a *synchronous* provider; only demo settles in-process — Stripe/PayPal
+  hand off to a hosted page the scripts can't drive. `auto` (production) hides demo once a
+  gateway works. So: `PAYMENTS_DEMO=on node node_modules/next/dist/bin/next start -p 3123`.
+- **A real shell env var overrides `.env.local`** in Next.js — that's what makes this work.
+- Never hard-code a derivable count. A 200 on a port is not proof it is *your* server — check an
+  identity field + owning PID.
+- listing/cart/checkout are **client-rendered**, so SSR HTML only shows `Loading listing…`;
+  buy-box facts must be checked in the browser. Against `next dev`, wait ~2.5 s after a form
+  appears before typing — filling a controlled input before hydration leaves state empty and
+  submit fails "field is required".
 
-## Non-obvious constraints (this machine)
-- `mongodb+srv://` SRV lookups are refused by the local DNS resolver. Keep
-  `MONGODB_URI_FALLBACK` (explicit `host1,host2,host3` seed list) populated — the
-  connection helper falls back to it automatically.
-- Database/network calls and localhost curl need the sandbox disabled.
-- **Port 3000 is usually a stale `next dev` for THIS project**, left over from an earlier
-  session. It silently rewrites `.next` with dev artifacts, so any `next build` output gets
-  clobbered and `next start` then dies with `Cannot find module .next/server/pages/_error.js`
-  while serving 500s for every `/_next/static/**` chunk (page renders, but never hydrates).
-  If that happens: `netstat -ano | grep :3000` to get the PID, kill it, then rebuild.
-  Run verification on **3123**. Localhost curl must quote the glob: `curl --noproxy '*'`.
-- Kill a Windows PID from Git Bash with path conversion off, or `taskkill` mangles the flags:
-  `MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' taskkill /F /PID <pid>`.
-- The sandbox's fail-closed delete shim blocks removing `.next` from both bash `mv`/`rm`
-  and PowerShell `Remove-Item`. Don't fight it — just run `next build`; Next overwrites the
-  directory in place and the build succeeds without a manual clear.
-- `next build` can fail with `SAFE_DELETE_BULK_CONFIRM_REQUIRED` when `.next` has >50 files.
-  If that recurs, build with `env -u NODE_OPTIONS npx next build` to drop the shim.
-- `Model.bulkWrite` rejects Mongoose `Query` objects — pass plain
-  `{ updateOne: { filter, update, upsert } }` ops, typed as
-  `Parameters<typeof Model.bulkWrite>[0]` so literal unions don't widen.
-- **Browser verification** (no agent-browser on Windows): Chromium is already cached at
-  `~/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe`; drive it with
-  `playwright-core` installed into `~/.workbuddy-ai/binaries/node/workspace`. From an
-  `.mjs` harness `NODE_PATH` does **not** work (ESM ignores it) — use
-  `createRequire('<workspace>/')` + `require('playwright-core')`. It must run with the
-  sandbox disabled, otherwise the script is killed with `SIGTERM` and **zero output**.
-  Full details in the `browser-verify-ui-change` skill.
-- The disk on this machine runs near-full (hit 100% mid-session); a screenshot write can
-  fail with `ENOSPC` while the app is fine.
+## Two sign-in doors — do not merge
+Staff are `User`, shoppers are `Member`; separate cookies and lifetimes.
 
-## Seeded accounts
-- `admin@kijiji.local` / `admin123` — full access
-- `editor@kijiji.local` / `editor123` — content only, no deletes, no staff access
+| Who | Page | Endpoint | Cookie |
+|---|---|---|---|
+| Shoppers/sellers | `/signin` | `/api/account/login` | `kijiji_session` (30d) |
+| Staff/admin | `/admin/login` | `/api/auth/login` | `kijiji_admin_session` (8h) |
+
+`/api/account/login` detects staff credentials → `403 {useAdminSignIn:true}` → `/signin` renders a
+link. **Fires only when the password is actually correct** for the staff account; that's what
+stops it being an enumeration oracle. Unknown email / wrong password must stay a generic 401.
+
+## Roles / seeded accounts
+`admin` all incl. deletes + staff · `editor` listings & categories · `moderator` inbox + reports +
+edit listings. Enforced in `lib/auth.ts` `requireRole` + inline per route.
+`admin@kijiji.local`/`admin123` · `editor@kijiji.local`/`editor123` ·
+`shopper@poorprice.com`/`shopper123` (**storefront member**, not staff).
+
+## Storefront state (cart + wishlist)
+Redux mirrored to `localStorage` (`poorprice.cart.v1`, `poorprice.wishlist.v1`) so a guest can
+shop without an account.
+- Count/total/heart renderers must gate on the slice's `hydrated` flag — the server has no storage
+  and renders the empty state, so painting the real value on first client render is a hydration
+  mismatch.
+- **Prices in these slices are display-only** — `POST /api/checkout` re-prices from MongoDB.
+- A `<button>` must never nest inside a card's wrapping `<a>` — invalid HTML, and the click
+  navigates instead of adding.
 
 ## Seed data
-48 categories across 9 groups. The `Antiques & Collectibles` vertical (25 categories) uses
-**picsum placeholder images** (`/seed/<slug>/800/600`) because the homepage skips categories
-with an empty `image`; swap them for real photography when it exists. Products carry real
-`"City, Province"` locations (one per province/territory) so the location filter has
-something to match — all 24 were `'Canada'` before, which made that filter look broken.
+48 categories / 9 groups. `Antiques & Collectibles` (25) uses picsum placeholders because the
+homepage skips categories with an empty `image`. Products carry real `"City, Province"`
+locations so the location filter has something to match.
 
-## Roles
-`admin` — everything incl. deletes + staff. `editor` — create/edit listings & categories.
-`moderator` — inbox + reports + edit listings. Enforced in `lib/auth.ts` `requireRole`
-and inline in each route handler.
+## Machine constraints (non-obvious)
+- `mongodb+srv://` SRV lookups are refused locally — keep `MONGODB_URI_FALLBACK` (explicit
+  `host1,host2,host3`) populated; the helper falls back automatically.
+- DB/network calls and localhost curl need the sandbox disabled. Quote the glob:
+  `curl --noproxy '*'`.
+- **Rebuild sequence that works** (stop servers first): (1) `rm -rf .next` as its own command so
+  the fail-closed delete shim doesn't trip; (2) `node node_modules/next/dist/bin/next build`;
+  (3) `PAYMENTS_DEMO=on node …/next start -p 3123`. **Do not `mv .next /tmp/…` before a build** —
+  that left `.next` in a state where the build died with a reproducible
+  `EPERM: … open '…\.next\trace'` and no `BUILD_ID`. `npx` is swallowed here (exits 0, no output).
+- **Port 3000 is usually a stale `next dev` for THIS project and shares `.next` with the `next
+  start` on 3123.** Whichever rebuilds wins; the other serves broken chunks (500s on
+  `/_next/static/**`, renders but never hydrates). **Never run both.**
+- Kill a Windows PID from Git Bash with path conversion off:
+  `MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' taskkill /F /PID <pid>`.
+- `Model.bulkWrite` rejects Mongoose `Query` objects — pass plain
+  `{updateOne:{filter,update,upsert}}` ops typed as `Parameters<typeof Model.bulkWrite>[0]`.
+- **Browser verification** on Windows: no agent-browser; drive Chromium via `playwright-core` from
+  `~/.workbuddy-ai/binaries/node/workspace` using `createRequire('<workspace>/')` — `NODE_PATH`
+  does **not** work in ESM. Needs the sandbox disabled or it's SIGTERM'd with no output. Full
+  recipe in the `browser-verify-ui-change` skill.
+- Disk runs near-full; a screenshot write can fail with `ENOSPC` while the app is fine.

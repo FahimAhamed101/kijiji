@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Providers from '@/components/Providers'
+import StoreHydrator from '@/components/StoreHydrator'
 import { SITE_NAME, SITE_URL } from '@/lib/site-config'
 
 export const metadata: Metadata = {
@@ -49,7 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <StoreHydrator />
+          {children}
+        </Providers>
       </body>
     </html>
   )

@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation'
 import { useGetCategoriesQuery } from '@/store/categoriesApi'
 import CategoryPicker, { type CategorySelection } from '@/components/CategoryPicker'
 import LocationPicker from '@/components/LocationPicker'
+import AccountMenu from '@/components/AccountMenu'
+import CartButton from '@/components/CartButton'
+import WishlistButton from '@/components/WishlistButton'
 import { LogoLockup } from '@/components/Logo'
 
 function SearchIcon() {
@@ -13,23 +16,6 @@ function SearchIcon() {
     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <circle cx="11" cy="11" r="7" />
       <path d="m20 20-4.35-4.35" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function UserIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    >
-      <circle cx="12" cy="7" r="4" />
-      <path d="M5 21v-2a7 7 0 0 1 14 0v2" strokeLinecap="round" />
     </svg>
   )
 }
@@ -173,9 +159,9 @@ export default function SiteHeader({
 
         <div className="account-actions">
           <LocationPicker value={currentLocation} onChange={handleLocationChange} />
-          <Link href="/admin">
-            <UserIcon /> Register or Sign In
-          </Link>
+          <AccountMenu />
+          <CartButton />
+          <WishlistButton />
           <Link href="/admin/products/new" className="post-button">
             Post ad
           </Link>

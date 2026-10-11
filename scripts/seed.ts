@@ -55,7 +55,8 @@ async function main() {
   console.log('  ✓ messages   :', result.messages.inserted, 'new')
   console.log('  ✓ reports    :', result.reports.inserted, 'new')
   console.log('')
-  console.log('  Sign in at /admin/login')
+  console.log('  Admin panel → /admin/login')
+  console.log('  Storefront  → /signin')
 
   // Every account this seed can sign you in with. Printed on purpose: this is a
   // local operator script, and the credentials are also listed (read-only) on
@@ -70,6 +71,17 @@ async function main() {
   for (const [loginEmail, loginPassword] of logins) {
     console.log('   ', loginEmail.padEnd(28), loginPassword)
   }
+
+  // The storefront member is a different kind of account (buyer, not staff), so
+  // it gets its own block rather than being mixed in with the admins above.
+  console.log('')
+  console.log('  Storefront member:')
+  console.log(
+    '   ',
+    result.demoMember.email.padEnd(28),
+    'shopper123',
+    result.demoMember.created ? '(created)' : '(already existed)'
+  )
   console.log('')
 
   await mongoose.disconnect()
